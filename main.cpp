@@ -38,13 +38,17 @@ void getIP(char *iface, char *ip) {
 	strncpy(ifr.ifr_name, iface, IFNAMSIZ-1);
 	ioctl(fd, SIOCGIFADDR, &ifr);
 	close(fd);
-	// store result
 	strcpy(ip, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
 }
 
 int main(int argc, char* argv[]) {
 	int i = 2;
+
 	while(1){
+		if(argc % 2 != 0){
+			fprintf(stderr,"Please give me more ip\n");
+			exit(1);
+		}
 		if(i>=argc)
 			break;
 
@@ -102,10 +106,7 @@ int main(int argc, char* argv[]) {
 				printf("Found target MAC address: %s\n", std::string(reply->arp_.smac_).c_str());
 				break;
 			}
-
 		}
-
-
 
 		EthArpPacket rppacket;
 		rppacket.eth_.dmac_ = Mac(Smac);
