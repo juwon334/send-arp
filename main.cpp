@@ -59,6 +59,8 @@ int main(int argc, char* argv[]) {
 	printf("IP: %s\n", ip);
 
 	while(1){
+		if(i>=argc)
+                        break;
 		char* dev = argv[1];
 		char errbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* handle = pcap_open_live(dev, BUFSIZ, 1, 1, errbuf);
@@ -66,8 +68,6 @@ int main(int argc, char* argv[]) {
 			fprintf(stderr, "couldn't open device %s(%s)\n", dev, errbuf);
 			return -1;
 		}
-		if(i>=argc)
-			break;
 		char Smac[18];
 		EthArpPacket packet;
 		packet.eth_.dmac_ = Mac("FF:FF:FF:FF:FF:FF");
