@@ -49,27 +49,29 @@ int main(int argc, char* argv[]) {
 			fprintf(stderr,"Please give me more ip\n");
 			exit(1);
 		}
+
 		if(i>=argc)
 			break;
+
+		unsigned char mac[ETHER_ADDR_LEN];
+                getMAC(argv[1], mac);
+                char macStr[18];
+                sprintf(macStr, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+                printf("MAC: %s\n", macStr);
+
+                char ip[20];
+                getIP(argv[1], ip);
+                printf("IP: %s\n", ip);
 
 		char* dev = argv[1];
 		char errbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* handle = pcap_open_live(dev, BUFSIZ, 1, 1, errbuf);
-		char Smac[18];
 		if (handle == nullptr) {
 			fprintf(stderr, "couldn't open device %s(%s)\n", dev, errbuf);
 			return -1;
 		}
-		unsigned char mac[ETHER_ADDR_LEN];
-		getMAC(argv[1], mac);
-		char macStr[18];
-		sprintf(macStr, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-		printf("MAC: %s\n", macStr);
 
-		char ip[20];
-		getIP(argv[1], ip);
-		printf("IP: %s\n", ip);
-
+		char Smac[18];
 		EthArpPacket packet;
 		packet.eth_.dmac_ = Mac("FF:FF:FF:FF:FF:FF");
 		packet.eth_.smac_ = Mac(macStr);
